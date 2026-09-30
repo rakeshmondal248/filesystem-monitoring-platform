@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Filesystem Intelligence Dashboard</title>
+
+    <script src="/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 24px 32px;
+        }
+
+        header h1 {
+            margin: 0 0 6px 0;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            margin: 0;
+            color: #b9c2d0;
+            font-size: 14px;
+        }
+
+        .header-time {
+            margin-top: 14px;
+            font-size: 14px;
+        }
+
+        .header-time strong {
+            color: white;
+        }
+
+        main {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .control-panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow:
+                0 4px 16px rgba(15, 23, 42, 0.05);
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns:
+                minmax(220px, 1fr)
+                minmax(220px, 1fr)
+                auto;
+            gap: 18px;
+            align-items: end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+	
+	.timezone-picker {
+    position: relative;
+    width: 100%;
+}
+
+.timezone-trigger {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #172033;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+}
+
+.timezone-trigger:hover {
+    border-color: #94a3b8;
+    background: #f8fafc;
+}
+
+.timezone-trigger:focus {
+    outline: none;
+    border-color: #64748b;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
+}
+
+.timezone-selected-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.timezone-arrow {
+    flex: 0 0 auto;
+    color: #64748b;
+    font-size: 15px;
+    transition: transform 0.15s ease;
+}
+
+.timezone-picker.open .timezone-arrow {
+    transform: rotate(180deg);
+}
+
+.timezone-menu {
+    position: absolute;
+    z-index: 1000;
+    top: calc(100% + 7px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #dbe2ea;
+    border-radius: 10px;
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.14),
+        0 3px 8px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+}
+
+.timezone-search-wrapper {
+    position: relative;
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.timezone-search-icon {
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 13px;
+    pointer-events: none;
+}
+
+.timezone-search {
+    width: 100%;
+    min-height: 38px;
+    box-sizing: border-box;
+    padding: 0 12px 0 34px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: #f8fafc;
+    color: #172033;
+    font-size: 13px;
+    outline: none;
+}
+
+.timezone-search::placeholder {
+    color: #94a3b8;
+}
+
+.timezone-search:focus {
+    background: #ffffff;
+    border-color: #64748b;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.10);
+}
+
+.timezone-options {
+    max-height: 270px;
+    overflow-y: auto;
+    padding: 6px;
+}
+
+.timezone-option {
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.timezone-option:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.timezone-option.selected {
+    background: #e2e8f0;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.timezone-no-results {
+    padding: 18px 12px;
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.timezone-hidden-select {
+    display: none !important;
+}	
+	
+        select,
+        button {
+            min-height: 42px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 0 13px;
+            font-size: 14px;
+            background: white;
+        }
+
+        select {
+            color: #172033;
+        }
+
+        button {
+            background: #111827;
+            color: white;
+            border-color: #111827;
+            cursor: pointer;
+            padding: 0 20px;
+            font-weight: 600;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .section-title {
+            margin: 0 0 16px 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            margin: -8px 0 18px 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .filesystem-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .filesystem-heading h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .filesystem-badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 20px;
+            min-height: 125px;
+            box-shadow:
+                0 4px 16px rgba(15, 23, 42, 0.05);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 27px;
+            font-weight: 750;
+            color: #111827;
+            line-height: 1.15;
+            word-break: break-word;
+        }
+
+        .metric-small {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .growth-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .content-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 24px;
+            box-shadow:
+                0 4px 16px rgba(15, 23, 42, 0.05);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 430px;
+        }
+
+        #usageChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(0, 1fr);
+            gap: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 13px 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 14px;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 28px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .fastest-card {
+            display: grid;
+            grid-template-columns:
+                minmax(0, 1.4fr)
+                repeat(3, minmax(90px, 1fr));
+            gap: 14px;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .fastest-directory {
+            font-weight: 700;
+            color: #111827;
+            word-break: break-all;
+        }
+
+        .fastest-label {
+            display: block;
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .fastest-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .prediction-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .prediction-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            background: #f8fafc;
+        }
+
+        .prediction-threshold {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .prediction-value {
+            margin-top: 8px;
+            font-size: 25px;
+            font-weight: 750;
+        }
+
+        .health-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .health-title {
+            font-size: 13px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .health-value {
+            margin-top: 6px;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .health-description {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 110px;
+            min-height: 36px;
+            padding: 0 15px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .status-online {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-offline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-unknown {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        footer {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+            padding: 10px 0 30px 0;
+        }
+
+        @media (max-width: 1100px) {
+
+            .cards-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .control-grid {
+                grid-template-columns:
+                    1fr 1fr;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            header {
+                padding: 20px;
+            }
+
+            main {
+                padding: 16px;
+            }
+
+            .cards-grid,
+            .growth-grid,
+            .prediction-grid,
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .fastest-card {
+                grid-template-columns: 1fr;
+            }
+
+            .filesystem-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .chart-container {
+                height: 330px;
+            }
+
+            .health-panel {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<header>
+
+    <h1>
+        Filesystem Intelligence
+    </h1>
+
+    <p class="header-subtitle">
+        Enterprise Filesystem Growth &amp; Capacity Monitoring
+    </p>
+
+    <div class="header-time">
+        Server Time:
+        <strong id="serverTime">-</strong>
+    </div>
+
+</header>
+
+
+<main>
+
+
+    <!-- CONTROL PANEL -->
+
+    <section class="control-panel">
+
+        <div class="control-grid">
+
+            <div class="control-group">
+
+                <label for="instanceSelect">
+                    Monitoring Instance
+                </label>
+
+                <select id="instanceSelect">
+
+                    <option value="">
+                        Loading...
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="timezoneSelect">
+                    Timezone
+                </label>
+	    <div class="timezone-picker" id="timezonePicker">
+
+    <button
+        type="button"
+        id="timezoneTrigger"
+        class="timezone-trigger"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+    >
+        <span
+            id="timezoneSelectedValue"
+            class="timezone-selected-value"
+        >
+            Asia/Kolkata
+        </span>
+
+        <span
+            id="timezoneArrow"
+            class="timezone-arrow"
+        >
+            ▾
+        </span>
+    </button>
+
+    <div
+        id="timezoneMenu"
+        class="timezone-menu"
+        hidden
+    >
+
+        <div class="timezone-search-wrapper">
+
+            <span class="timezone-search-icon">
+                🔍
+            </span>
+
+            <input
+                type="text"
+                id="timezoneSearch"
+                class="timezone-search"
+                placeholder="Search timezone..."
+                autocomplete="off"
+            >
+
+        </div>
+
+        <div
+            id="timezoneOptions"
+            class="timezone-options"
+            role="listbox"
+            aria-label="Timezone options"
+        >
+        </div>
+
+        <div
+            id="timezoneNoResults"
+            class="timezone-no-results"
+            hidden
+        >
+            No timezone found
+        </div>
+
+    </div>
+
+    <!-- Hidden compatibility select.
+         Existing timezone logic continues to use this value. -->
+    <select
+        id="timezoneSelect"
+        class="timezone-hidden-select"
+        aria-hidden="true"
+        tabindex="-1"
+    >
+    </select>
+
+</div>
+	                   
+
+            </div>
+
+
+            <div class="control-group">
+
+                <button id="logoutButton">
+                    Logout
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- INSTANCE HEADER -->
+
+    <section class="content-card">
+
+        <div class="filesystem-heading">
+
+            <div>
+
+                <h2 id="instanceValue">
+                    Filesystem Intelligence
+                </h2>
+
+                <p class="section-subtitle">
+                    Monitoring filesystem capacity, utilization,
+                    growth and storage contributors.
+                </p>
+
+            </div>
+
+            <div
+                id="filesystemBadge"
+                class="filesystem-badge"
+            >
+                Filesystem: /u01
+            </div>
+
+        </div>
+
+
+        <!-- PRIMARY METRICS -->
+
+        <div class="cards-grid">
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Capacity
+                </div>
+
+                <div
+                    id="capacityValue"
+                    class="metric-value"
+                >
+                    -
+                </div>
+
+                <div class="metric-small">
+                    Total filesystem capacity
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Current Usage
+                </div>
+
+                <div
+                    id="usedValue"
+                    class="metric-value"
+                >
+                    -
+                </div>
+
+                <div class="metric-small">
+                    Currently consumed storage
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Utilization
+                </div>
+
+                <div
+                    id="utilizationValue"
+                    class="metric-value"
+                >
+                    -
+                </div>
+
+                <div class="metric-small">
+                    Filesystem utilization
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Agent Status
+                </div>
+
+                <div
+                    id="agentStatus"
+                    class="metric-value"
+                >
+                    -
+                </div>
+
+                <div class="metric-small">
+                    Monitoring agent state
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- GROWTH METRICS -->
+
+        <div class="growth-grid">
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    7-Day Growth
+                </div>
+
+                <div
+                    id="sevenDayGrowth"
+                    class="metric-value"
+                >
+                    -
+                </div>
+
+                <div
+                    id="sevenDayGrowthDetail"
+                    class="metric-small"
+                >
+                    Historical data required
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    14-Day Growth
+                </div>
+
+                <div
+                    id="fourteenDayGrowth"
+                    class="metric-value"
+                >
+                    -
+                </div>
+
+                <div
+                    id="fourteenDayGrowthDetail"
+                    class="metric-small"
+                >
+                    Historical data required
+                </div>
+
+            </div>
+
+
+            <div class="metric-card">
+
+                <div class="metric-label">
+                    Average Daily Growth
+                </div>
+
+                <div
+                    id="averageDailyGrowth"
+                    class="metric-value"
+                >
+                    -
+                </div>
+
+                <div class="metric-small">
+                    Based on available historical data
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- LAST COLLECTION -->
+
+        <div class="metric-card">
+
+            <div class="metric-label">
+                Last Collection
+            </div>
+
+            <div
+                id="lastCollection"
+                class="metric-value"
+            >
+                -
+            </div>
+
+            <div class="metric-small">
+                Displayed using selected timezone
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CHART -->
+
+    <section class="content-card">
+
+        <h2 class="section-title">
+            Storage Utilization Trend
+        </h2>
+
+        <p class="section-subtitle">
+            Filesystem utilization over time.
+            Chart timestamps follow the selected timezone.
+        </p>
+
+        <div class="chart-container">
+
+            <canvas
+                id="usageChart"
+            ></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- STORAGE CONTRIBUTORS -->
+
+    <section class="content-card">
+
+        <h2 class="section-title">
+            Top Storage Contributors
+        </h2>
+
+        <p class="section-subtitle">
+            Directories currently consuming the most storage.
+        </p>
+
+        <table id="directoryTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Directory
+                    </th>
+
+                    <th>
+                        Used Storage
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+
+                    <td
+                        colspan="2"
+                        class="empty-state"
+                    >
+                        Loading...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- FASTEST GROWING -->
+
+    <section class="content-card">
+
+        <h2 class="section-title">
+            Fastest Growing
+        </h2>
+
+        <p class="section-subtitle">
+            Directory showing the highest growth over
+            the available monitoring history.
+        </p>
+
+
+        <div
+            id="fastestGrowingContainer"
+            class="fastest-card"
+        >
+
+            <div class="fastest-directory">
+
+                <span class="fastest-label">
+                    Directory
+                </span>
+
+                <span id="fastestGrowingDirectory">
+                    -
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <span class="fastest-label">
+                    Previous
+                </span>
+
+                <span
+                    id="fastestGrowingPrevious"
+                    class="fastest-value"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <span class="fastest-label">
+                    Current
+                </span>
+
+                <span
+                    id="fastestGrowingCurrent"
+                    class="fastest-value"
+                >
+                    -
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <span class="fastest-label">
+                    Growth
+                </span>
+
+                <span
+                    id="fastestGrowingGrowth"
+                    class="fastest-value"
+                >
+                    -
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PREDICTION -->
+
+    <section class="content-card">
+
+        <h2 class="section-title">
+            Capacity Prediction
+        </h2>
+
+        <p class="section-subtitle">
+            Estimated time to reach filesystem utilization
+            thresholds based on measured growth.
+        </p>
+
+
+        <div class="prediction-grid">
+
+
+            <div class="prediction-card">
+
+                <div class="prediction-threshold">
+                    80% Threshold
+                </div>
+
+                <div
+                    id="prediction80"
+                    class="prediction-value"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="prediction-card">
+
+                <div class="prediction-threshold">
+                    90% Threshold
+                </div>
+
+                <div
+                    id="prediction90"
+                    class="prediction-value"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="prediction-card">
+
+                <div class="prediction-threshold">
+                    95% Threshold
+                </div>
+
+                <div
+                    id="prediction95"
+                    class="prediction-value"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- HEALTH -->
+
+    <section class="content-card">
+
+        <h2 class="section-title">
+            Filesystem Health
+        </h2>
+
+        <div class="health-panel">
+
+            <div>
+
+                <div class="health-title">
+                    Current Health Status
+                </div>
+
+                <div
+                    id="healthStatus"
+                    class="health-value"
+                >
+                    -
+                </div>
+
+                <div
+                    id="healthDescription"
+                    class="health-description"
+                >
+                    Monitoring filesystem health.
+                </div>
+
+            </div>
+
+
+            <div
+                id="healthBadge"
+                class="status-pill status-unknown"
+            >
+                UNKNOWN
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<footer>
+
+    Filesystem Intelligence Platform
+
+</footer>
+
+
+<script src="/dashboard.js"></script>
+
+
+</body>
+
+</html>

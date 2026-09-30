@@ -1,0 +1,9 @@
+[Unit]
+Description=Filesystem Monitoring Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/fs-monitor-agent/agent.sh
+User=root

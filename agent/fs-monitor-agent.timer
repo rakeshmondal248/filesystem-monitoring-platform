@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Filesystem Monitoring Agent Every Minute
+
+[Timer]
+OnBootSec=30
+OnUnitActiveSec=60
+Unit=fs-monitor-agent.service
+
+[Install]
+WantedBy=timers.target

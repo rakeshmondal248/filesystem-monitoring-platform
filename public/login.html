@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Filesystem Intelligence Login</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            background: white;
+            padding: 35px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.1);
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            box-sizing: border-box;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        #error {
+            color: red;
+            margin-top: 10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <h2>Filesystem Intelligence</h2>
+
+        <p>Monitoring Platform Login</p>
+
+        <input
+            id="username"
+            placeholder="Username"
+        >
+
+        <input
+            id="password"
+            type="password"
+            placeholder="Password"
+        >
+
+        <button id="loginButton">
+            Login
+        </button>
+
+        <button id="registerButton">
+            Create Account
+        </button>
+
+        <div id="error"></div>
+
+    </div>
+
+    <script src="/login.js"></script>
+
+</body>
+
+</html>

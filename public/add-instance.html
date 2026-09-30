@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Add Monitoring Instance</title>
+
+</head>
+
+<body>
+
+    <h1>
+        Add EC2 Instance
+    </h1>
+
+
+    <label for="instanceId">
+        AWS EC2 Instance ID
+    </label>
+
+    <br>
+
+    <input
+        id="instanceId"
+        type="text"
+        placeholder="i-0123456789abcdef0"
+    >
+
+
+    <br>
+    <br>
+
+
+    <label for="name">
+        Instance Name
+    </label>
+
+    <br>
+
+    <input
+        id="name"
+        type="text"
+        placeholder="Production Server"
+    >
+
+
+    <br>
+    <br>
+
+
+    <button id="createButton">
+        Create Monitoring Instance
+    </button>
+
+
+    <br>
+    <br>
+
+
+    <pre id="result"></pre>
+
+
+    <script src="/add-instance.js"></script>
+
+</body>
+
+</html>
