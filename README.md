@@ -208,3 +208,33 @@ Before deploying, generate a new production session secret and configure real ag
 ## License
 
 No open-source license has been selected for this project yet.
+## Task 17 - SSM Automation
+
+Task 17 extends the existing Filesystem Monitoring Platform with reusable AWS Systems Manager (SSM) automation for deploying the filesystem monitoring agent to managed EC2 instances.
+
+The automation installer is available at:
+
+`automation/ssm/install-agent.sh`
+
+Task 17 documentation:
+
+`automation/ssm/README.md`
+
+The installer checks the target filesystem and required commands, detects EC2 instance identity and Region using IMDSv2, validates deployment configuration, installs the monitoring agent, and configures a systemd service and timer for recurring metric collection.
+
+### Prerequisites
+
+- An EC2 Linux instance managed by AWS Systems Manager.
+- Appropriate IAM permissions for the deployment workflow.
+- A configured monitoring endpoint and valid agent token.
+- The required filesystem mounted on the target instance, normally `/u01`.
+
+### Security
+
+Provide monitoring credentials securely during deployment. Do not commit real agent tokens, AWS credentials, private keys, production configuration files, or sensitive backups to the repository.
+
+### Verification
+
+After deployment, check the agent's systemd timer and service on the target EC2 instance and confirm that metrics appear in the central monitoring dashboard.
+
+This is an extension of the existing project, not a separate application.
